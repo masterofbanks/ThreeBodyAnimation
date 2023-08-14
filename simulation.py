@@ -1,5 +1,5 @@
 import numpy as np
-EPS = 1e-7 # epsilon for numerical stability
+EPS = 0 # epsilon for numerical stability
 
 def runge_kutta_step(f, y, h):
     # assuming f does not depend on t (time symmetry)
@@ -9,10 +9,10 @@ def runge_kutta_step(f, y, h):
     k4 = f(y + h*k3)
     return y + h/6*(k1 + 2*k2 + 2*k3 + k4)
 
-G = 6.67408e-11 # gravitational constant
+G = 6.674e-11 * 1e-9 # gravitational constant in km^3 kg^-1 s^-2
 def gravity(x1, x2, y1, y2, m2):
     # acceleration due to gravity of m2 on m1
-    return -G*m2*(x1-x2)/(np.linalg.norm((x1-x2, y1-y2))+EPS)**3
+    return -G*m2*(x1-x2)/((np.linalg.norm((x1-x2, y1-y2))+EPS)**3)
 
 def simulate_step(x, y, m, h):
     # x, y are each arrays of shape (N,2) for N bodies and two components:
