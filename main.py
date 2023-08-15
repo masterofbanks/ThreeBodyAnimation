@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt # temporary visualization for testing
 import matplotlib.animation as animation
 # import functions for animation as well
 
-H = 86400//24 # step size in seconds (equal to 2 hours)
-N = 2 # number of bodies
-SIM_LEN = 100000
-SIM_SPEED = 50
+H = 86400//24 # step size in seconds (equal to 1 hour)
+N = 4 # number of bodies
+SIM_LEN = int(365.2422*24)
+SIM_SPEED = 10
 
 x = np.zeros((N,2)) # N bodies, two components: position and velocity
 y = np.zeros((N,2))
@@ -16,12 +16,27 @@ m = np.ones(N) # masses of the N bodies
 # set initial conditions
 x[0] = np.array([0,0])
 y[0] = np.array([0,0])
-m = np.ones(N) * 1e24
-m[0] = 1e30
+m = np.ones(N)
+
+PLANET_DISTANCES_AU = [
+    0.39,
+    0.72,
+    1.00
+]
+MASSES_KG = [
+    1.989e30, # sun
+    3.285e23, # mercury
+    4.867e24, # venus
+    5.972e24, # earth
+]
+for i in range(N):
+    m[i] = MASSES_KG[i] * 1e-3 # Mg
+
 for i in range(1,N):
-    x[i][0] = 1e8 * (i*10-9)
-    y[i][0] = x[i][0]
-    dist = np.linalg.norm((x[i][0]-x[0][0], y[i][0]-y[0][0]))
+    dist = PLANET_DISTANCES_AU[i-1] * 1.496e8 # km
+    angle = np.random.rand() * 2 * np.pi
+    x[i,0] = dist * np.cos(angle)
+    y[i,0] = dist * np.sin(angle)
     vi = np.sqrt(G*m[0]/dist)
     x[i][1] = vi*(y[i][0]-y[0][0])/dist
     y[i][1] = -vi*(x[i][0]-x[0][0])/dist
@@ -33,10 +48,10 @@ for i in range(SIM_LEN):
     simulation.append(sim)
 simulation = np.array(simulation)
 
-TRAIL_LEN = 10000
+TRAIL_LEN = 50
 max_coord = np.max(np.abs(np.concatenate(simulation))) * 1.2
 fig = plt.figure()
-scatter = plt.scatter(x[:,0], y[:,0], s=np.log10(m))
+scatter = plt.scatter(x[:,0], y[:,0], s=np.log(m/np.min(m)+1)*10)
 trail_lines = []
 for i in range(N):
     trail_lines.append(plt.plot([], [], color=scatter.get_facecolor()[0])[0])
