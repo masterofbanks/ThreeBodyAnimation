@@ -6,16 +6,14 @@ import matplotlib.animation as animation
 
 H = 86400//24 # step size in seconds (equal to 1 hour)
 N = 4 # number of bodies
-SIM_LEN = int(365.2422*24)
+SIM_LEN = int(365.2422*24*1.5)
 SIM_SPEED = 10
 
-x = np.zeros((N,2)) # N bodies, two components: position and velocity
-y = np.zeros((N,2))
+xy = np.zeros((N,4)) # N bodies, four components: x, y, vx, vy
 m = np.ones(N) # masses of the N bodies
 
 # set initial conditions
-x[0] = np.array([0,0])
-y[0] = np.array([0,0])
+xy[0] = np.array([0,0,0,0])
 m = np.ones(N)
 
 PLANET_DISTANCES_AU = [
@@ -35,23 +33,23 @@ for i in range(N):
 for i in range(1,N):
     dist = PLANET_DISTANCES_AU[i-1] * 1.496e8 # km
     angle = np.random.rand() * 2 * np.pi
-    x[i,0] = dist * np.cos(angle)
-    y[i,0] = dist * np.sin(angle)
+    xy[i,0] = dist * np.cos(angle)
+    xy[i,1] = dist * np.sin(angle)
     vi = np.sqrt(G*m[0]/dist)
-    x[i][1] = vi*(y[i][0]-y[0][0])/dist
-    y[i][1] = -vi*(x[i][0]-x[0][0])/dist
+    xy[i,2] = vi*(xy[i,1]-xy[0,1])/dist
+    xy[i,3] = -vi*(xy[i,0]-xy[0,0])/dist
 
 simulation = []
 for i in range(SIM_LEN):
-    x, y = simulate_step(x, y, m, H)
-    sim = np.array([x[:,0], y[:,0]]).T
+    xy = simulate_step(xy, m, H)
+    sim = np.array([xy[:,0], xy[:,1]]).T
     simulation.append(sim)
 simulation = np.array(simulation)
 
 TRAIL_LEN = 50
 max_coord = np.max(np.abs(np.concatenate(simulation))) * 1.2
 fig = plt.figure()
-scatter = plt.scatter(x[:,0], y[:,0], s=np.log(m/np.min(m)+1)*10)
+scatter = plt.scatter(xy[:,0], xy[:,1], s=np.log(m/np.min(m)+1)*10)
 trail_lines = []
 for i in range(N):
     trail_lines.append(plt.plot([], [], color=scatter.get_facecolor()[0])[0])
