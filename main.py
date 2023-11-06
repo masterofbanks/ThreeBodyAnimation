@@ -40,11 +40,7 @@ for i in range(1,N):
     xy[i,3] = -vi*(xy[i,0]-xy[0,0])/dist
 
 simulation = []
-for i in range(SIM_LEN):
-    xy = simulate_step(xy, m, H)
-    sim = np.array([xy[:,0], xy[:,1]]).T
-    simulation.append(sim)
-simulation = np.array(simulation)
+simulation = simulate_steps(xy, m, H, SIM_LEN)
 
 TRAIL_LEN = 50
 max_coord = np.max(np.abs(np.concatenate(simulation))) * 1.2
