@@ -19,13 +19,17 @@ m = np.ones(N)
 PLANET_DISTANCES_AU = [
     0.39,
     0.72,
-    1.00
+    1.00,
+    2.54,
+    5.20
 ]
 MASSES_KG = [
     1.989e30, # sun
     3.285e23, # mercury
     4.867e24, # venus
     5.972e24, # earth
+    6.413e23, # mars
+    1.898e27, #jupiter
 ]
 for i in range(N):
     m[i] = MASSES_KG[i] * 1e-3 # Mg
