@@ -2,14 +2,6 @@ import numpy as np
 import scipy.integrate as integrate
 EPS = 1e-12 # epsilon for numerical stability
 
-def runge_kutta_step(f, y, h):
-    # assuming f does not depend on t (time symmetry)
-    k1 = f(y)
-    k2 = f(y + h/2*k1)
-    k3 = f(y + h/2*k2)
-    k4 = f(y + h*k3)
-    return h/6*(k1 + 2*k2 + 2*k3 + k4)
-
 G = 6.674e-11 * 1e3 * 1e-9 # gravitational constant in km^3 Mg^-1 s^-2
 def gravity(x1, x2, y1, y2, m2):
     # acceleration due to gravity of m2 on m1
